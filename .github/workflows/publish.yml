@@ -30,6 +30,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: 为 gradlew 添加执行权限
+        run: chmod +x gradlew
+
       - name: 解析版本号
         id: version
         run: |

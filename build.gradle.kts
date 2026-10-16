@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.apache.logging.log4j"
-version = providers.gradleProperty("version").getOrElse("1.0")
+version = providers.gradleProperty("version").getOrElse("1.0.0")
 
 kapt {
     // https://kotlinlang.org/docs/kapt.html#keep-java-compiler-s-annotation-processors
