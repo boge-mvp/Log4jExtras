@@ -1,0 +1,57 @@
+Configuration:
+  name: RoutingTest
+  status: warn
+  
+  Properties:
+    Property:
+      - name: "filename"
+        value: "target/rolling1/rollingtest-${sd:type}.log"
+  
+  Appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    Routing:
+      name: Routing
+      Routes:
+        pattern: "$${ctx:type}"
+        Route:
+          RollingFile:
+            - name: "Rolling-${ctx:type}"
+              fileName: "target/routing-${ctx:type}.log"
+              filePattern: "target/routing-${ctx:type}.%i.log.gz"
+              PatternLayout:
+                pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+              Filters:
+                - ContextMapRegexFilter:
+                    onMatch: ACCEPT
+                    onMismatch: DENY
+                    operator: "and"
+                    KeyValuePair:
+                      - key: "type"
+                        value: "test.*"
+            - name: "Rolling-other"
+              fileName: "target/routing-other.log"
+              filePattern: "target/routing-other.%i.log.gz"
+              PatternLayout:
+                pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+              Filters:
+                - ContextKeyExistsFilter:
+                    onMatch: ACCEPT
+                    onMismatch: DENY
+                    keys:
+                      - key: "userId"
+
+  Loggers:
+    Root:
+      level: debug
+      AppenderRef:
+        - ref: "STDOUT"
+    Logger:
+      - name: "RoutingTestLogger"
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: "Routing"
