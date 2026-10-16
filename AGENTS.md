@@ -63,7 +63,7 @@
 - **GitHub Actions** (`.github/workflows/publish.yml`)：
   - 触发机制：推送 `v*` tag 或在 Actions 面板手动触发（`workflow_dispatch`，可自定义输入版本号）。
   - 发布目标：GitHub Packages (`https://maven.pkg.github.com/boge-mvp/Log4jExtras`)。
-  - 构件坐标：`org.apache.logging.log4j:log4j-extras:<version>`，包含主 Jar、`-sources.jar`、`-javadoc.jar` 以及生成的 POM 文件。
+  - 构件坐标：`com.github.boge-mvp:Log4jExtras:<version>`，包含主 Jar、`-sources.jar`、`-javadoc.jar` 以及生成的 POM 文件。
   - 凭据说明：通过内置 `GITHUB_TOKEN` 自动鉴权，无需额外配置 Secret。
 
 ---

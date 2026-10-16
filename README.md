@@ -41,7 +41,7 @@ dependencyResolutionManagement {
 
 // 2. 在 build.gradle.kts 中添加依赖
 dependencies {
-    implementation("com.github.boge-mvp:Log4jExtras:v1.0.0")
+    implementation("com.github.boge-mvp:Log4jExtras:1.0.0")
 }
 ```
 
@@ -58,7 +58,7 @@ dependencies {
 <dependency>
     <groupId>com.github.boge-mvp</groupId>
     <artifactId>Log4jExtras</artifactId>
-    <version>v1.0.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -104,7 +104,7 @@ beforeSettings { settings ->
             mavenCentral()
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/boge-mvp/repo")
+                url = uri("https://maven.pkg.github.com/boge-mvp/Log4jExtras")
                 credentials {
                     username = settings.providers.gradleProperty("gpr.user").orNull ?: ""
                     password = settings.providers.gradleProperty("gpr.key").orNull ?: ""
@@ -121,7 +121,7 @@ beforeSettings { settings ->
             maven { url = uri("https://maven.aliyun.com/repository/public") }
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/boge-mvp/repo")
+                url = uri("https://maven.pkg.github.com/boge-mvp/Log4jExtras")
                 credentials {
                     username = settings.providers.gradleProperty("gpr.user").orNull ?: ""
                     password = settings.providers.gradleProperty("gpr.key").orNull ?: ""
@@ -163,7 +163,7 @@ dependencyResolutionManagement {
 <repositories>
     <repository>
         <id>github-log4j-extras</id>
-        <url>https://maven.pkg.github.com/boge-mvp/repo</url>
+        <url>https://maven.pkg.github.com/boge-mvp/Log4jExtras</url>
     </repository>
 </repositories>
 ```
@@ -176,7 +176,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-extras:1.0.0")
+    implementation("com.github.boge-mvp:Log4jExtras:1.0.0")
 }
 ```
 
@@ -184,9 +184,9 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>org.apache.logging.log4j</groupId>
-    <artifactId>log4j-extras</artifactId>
-    <version>1.0</version>
+    <groupId>com.github.boge-mvp</groupId>
+    <artifactId>Log4jExtras</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 

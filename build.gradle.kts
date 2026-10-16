@@ -4,7 +4,7 @@ plugins {
     `maven-publish`
 }
 
-group = "org.apache.logging.log4j"
+group = "com.github.boge-mvp"
 version = providers.gradleProperty("version").getOrElse("1.0.0")
 
 kapt {
@@ -49,7 +49,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = group.toString()
-            artifactId = "log4j-extras"
+            artifactId = "Log4jExtras"
             version = version
 
             from(components["java"])
@@ -57,20 +57,20 @@ publishing {
             pom {
                 name.set("Log4jExtras")
                 description.set("Additional features for Apache Log4j")
-                url.set("https://github.com/example/log4j-extras")
+                url.set("https://github.com/boge-mvp/Log4jExtras")
 
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
 
                 developers {
                     developer {
-                        id.set("developer")
-                        name.set("Developer Name")
-                        email.set("dev@example.com")
+                        id.set("boge-mvp")
+                        name.set("boge")
+                        url.set("https://github.com/boge-mvp")
                     }
                 }
             }
