@@ -1,6 +1,7 @@
 # Log4jExtras
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![JitPack](https://jitpack.io/v/boge-mvp/Log4jExtras.svg)](https://jitpack.io/#boge-mvp/Log4jExtras)
 [![GitHub Packages](https://img.shields.io/badge/Maven-GitHub%20Packages-red.svg)](https://github.com/boge-mvp/Log4jExtras)
 [![JDK](https://img.shields.io/badge/JDK-23-orange.svg)](https://jdk.java.net/23/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.0-purple.svg)](https://kotlinlang.org)
@@ -23,26 +24,138 @@
 
 ## 🚀 快速开始
 
-### 1. 配置 GitHub Packages 仓库
+本项目支持 **JitPack（零凭据公网直连，推荐）** 和 **GitHub Packages** 两种分发方式。
+
+### 方式一：通过 JitPack 引入（推荐，无需任何 GitHub Token）
 
 #### Gradle (Kotlin DSL)
 
-在 `settings.gradle.kts` 或 `build.gradle.kts` 中配置：
+```kotlin
+// 1. 在 settings.gradle.kts 中添加仓库
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// 2. 在 build.gradle.kts 中添加依赖
+dependencies {
+    implementation("com.github.boge-mvp:Log4jExtras:v1.0.0")
+}
+```
+
+#### Maven (`pom.xml`)
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.boge-mvp</groupId>
+    <artifactId>Log4jExtras</artifactId>
+    <version>v1.0.0</version>
+</dependency>
+```
+
+---
+
+### 方式二：通过 GitHub Packages 引入
+
+#### 选项 A：Gradle 全局初始化配置（零代码侵入且多项目通用）
+
+无需在每个项目的 `settings.gradle.kts` 中散落个人 Token，一次配置即可对电脑上所有 Gradle 项目全局生效：
+
+##### 第一步：在全局属性中配置 GitHub 凭证
+
+打开或创建你电脑用户根目录下的 `~/.gradle/gradle.properties` 文件（Windows 用户为 `C:\Users\用户名\.gradle\gradle.properties`），在其中配置你的 GitHub 用户名和具有 `read:packages` 权限的 Personal Access Token (经典令牌)：
+
+```properties
+# ~/.gradle/gradle.properties
+gpr.user=你的GitHub用户名
+gpr.key=ghp_你的GitHub经典Token令牌
+```
+
+> 💡 **核心排查点：你的 `$GRADLE_USER_HOME` 在哪里？**  
+> Gradle 官方指出，全局初始化脚本只会在以下几个位置按固定顺序被自动加载：  
+> 1. `$GRADLE_USER_HOME/init.gradle`  
+> 2. `$GRADLE_USER_HOME/init.d/` 目录下的任何以 `.gradle` 结尾的文件（按字母顺序执行）  
+> 3. `$GRADLE_HOME/init.d/` 目录下的文件（属于本地安装的 Gradle 软件目录）  
+> 
+> 很多开发者以为用户根目录就是 `~/.gradle`（即 `C:\Users\用户名\.gradle`）。但如果在 Windows 系统中配置了环境变量（如 `GRADLE_USER_HOME` 指向了其他盘符），或者 Android Studio 内部使用了单独的隔离目录，那么它就永远不会去读默认的那个 `C:\Users` 目录。
+
+##### 第二步：创建全局初始化脚本注入仓库
+
+打开或创建你电脑用户根目录下的 `~/.gradle/init.gradle` 文件，复制并粘贴以下代码。这段脚本会自动为你电脑上所有 Gradle 项目的依赖解析和插件解析注入 GitHub 仓库：
+
+```groovy
+println("🔥 ====== 全局 init.gradle 加载 ======")
+// 在 Gradle 设置加载完成后执行，确保能全局注入仓库
+beforeSettings { settings ->
+
+    // 1. 定义插件下载仓库（解决 plugins { ... } 找不到的问题）
+    settings.pluginManagement {
+        repositories {
+            maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+            mavenCentral()
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/boge-mvp/repo")
+                credentials {
+                    username = settings.providers.gradleProperty("gpr.user").orNull ?: ""
+                    password = settings.providers.gradleProperty("gpr.key").orNull ?: ""
+                }
+            }
+            gradlePluginPortal()
+        }
+    }
+
+    // 2. 定义项目依赖仓库（解决 implementation '...' 找不到的问题）
+    settings.dependencyResolutionManagement {
+        repositories {
+            mavenLocal()
+            maven { url = uri("https://maven.aliyun.com/repository/public") }
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/boge-mvp/repo")
+                credentials {
+                    username = settings.providers.gradleProperty("gpr.user").orNull ?: ""
+                    password = settings.providers.gradleProperty("gpr.key").orNull ?: ""
+                }
+            }
+            mavenCentral()
+        }
+    }
+}
+```
+
+---
+
+#### 选项 B：单项目局部配置（备选）
+
+若仅希望在当前单个项目中配置，可在该项目的 `settings.gradle.kts` 中添加：
 
 ```kotlin
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
         maven {
+            name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/boge-mvp/repo")
             credentials {
-                username = providers.environmentVariable("GITHUB_ACTOR").getOrElse("x")
-                password = providers.environmentVariable("GITHUB_TOKEN").getOrElse("x")
+                username = providers.environmentVariable("GITHUB_ACTOR").getOrElse("")
+                password = providers.environmentVariable("GITHUB_TOKEN").getOrElse("")
             }
         }
     }
 }
 ```
+
+---
 
 #### Maven (`pom.xml`)
 

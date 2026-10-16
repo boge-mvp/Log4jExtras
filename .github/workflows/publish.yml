@@ -51,3 +51,15 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 触发 JitPack 预构建
+        run: |
+          if [[ "${{ github.ref_name }}" == v* ]]; then
+            TAG_NAME="${{ github.ref_name }}"
+          elif [ -n "${{ env.PROJECT_VERSION }}" ]; then
+            TAG_NAME="v${{ env.PROJECT_VERSION }}"
+          else
+            TAG_NAME="v1.0.0"
+          fi
+          echo "正在通知 JitPack 预热构建，目标版本: $TAG_NAME"
+          curl -s -m 30 "https://jitpack.io/api/builds/com.github.boge-mvp/Log4jExtras/${TAG_NAME}" || true
