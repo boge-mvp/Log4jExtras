@@ -93,7 +93,7 @@ gpr.key=ghp_你的GitHub经典Token令牌
 打开或创建你电脑用户根目录下的 `~/.gradle/init.gradle` 文件，复制并粘贴以下代码。这段脚本会自动为你电脑上所有 Gradle 项目的依赖解析和插件解析注入 GitHub 仓库：
 
 ```groovy
-println("🔥 ====== 全局 init.gradle 加载 ======")
+println("🔥 ====== Global init.gradle loading ======")
 // 在 Gradle 设置加载完成后执行，确保能全局注入仓库
 beforeSettings { settings ->
 
@@ -102,14 +102,6 @@ beforeSettings { settings ->
         repositories {
             maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
             mavenCentral()
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/boge-mvp/Log4jExtras")
-                credentials {
-                    username = settings.providers.gradleProperty("gpr.user").orNull ?: ""
-                    password = settings.providers.gradleProperty("gpr.key").orNull ?: ""
-                }
-            }
             gradlePluginPortal()
         }
     }
